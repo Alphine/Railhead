@@ -1,0 +1,621 @@
+<title>Railhead</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper: #f2f4f7;
+    --surface: #ffffff;
+    --ink: #14171f;
+    --ink-soft: #4b5160;
+    --line: #dadee6;
+    --line-strong: #b9c0cf;
+    --accent: #1e4fd6;
+    --accent-soft: #e6ecfd;
+    --accent-ink: #0f2f8a;
+    --ok: #1f8a5f;
+    --ok-soft: #e3f5ec;
+    --warn: #a8660b;
+    --warn-soft: #faedd8;
+    --risk: #c4382e;
+    --risk-soft: #fbe6e4;
+    --track: #c7cedb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper: #12141a;
+      --surface: #1a1d26;
+      --ink: #e7e9ee;
+      --ink-soft: #a4abbc;
+      --line: #2c3040;
+      --line-strong: #3c4257;
+      --accent: #7091ff;
+      --accent-soft: #202b4d;
+      --accent-ink: #b7c6ff;
+      --ok: #4fcf98;
+      --ok-soft: #17332a;
+      --warn: #e0ac54;
+      --warn-soft: #3a2c14;
+      --risk: #ef6a5f;
+      --risk-soft: #3a1e1c;
+      --track: #333a4d;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper: #12141a;
+    --surface: #1a1d26;
+    --ink: #e7e9ee;
+    --ink-soft: #a4abbc;
+    --line: #2c3040;
+    --line-strong: #3c4257;
+    --accent: #7091ff;
+    --accent-soft: #202b4d;
+    --accent-ink: #b7c6ff;
+    --ok: #4fcf98;
+    --ok-soft: #17332a;
+    --warn: #e0ac54;
+    --warn-soft: #3a2c14;
+    --risk: #ef6a5f;
+    --risk-soft: #3a1e1c;
+    --track: #333a4d;
+  }
+
+  *{ box-sizing: border-box; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  ::selection{ background: var(--accent-soft); color: var(--accent-ink); }
+
+  code, .mono, .field-value, .toc-index, .eyebrow, th, td, .status-pill, .var-name{
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+
+  h1,h2,h3{
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  a{ color: var(--accent); }
+
+  .eyebrow{
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* ---------- header / manifest ---------- */
+  .manifest{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.75rem 2rem 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .manifest-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .manifest-title h1{
+    font-size: 2.05rem;
+    margin: 0.35rem 0 0.5rem;
+  }
+  .manifest-title p{
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
+  .ticket{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 0.15rem 1.5rem;
+    padding: 0.9rem 1.15rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    min-width: 15rem;
+  }
+  .field-label{
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    align-self: center;
+  }
+  .field-value{ font-size: 0.8rem; font-weight: 500; align-self: center; }
+  .status-pill{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem 0.15rem;
+    border-radius: 2px;
+  }
+  .status-pill::before{ content:""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .status-draft{ background: var(--warn-soft); color: var(--warn); }
+
+  /* ---------- layout ---------- */
+  .layout{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+    display: grid;
+    grid-template-columns: 232px minmax(0,1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  nav.toc{
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    border-left: 1px solid var(--line);
+    padding-left: 1rem;
+  }
+  nav.toc a{
+    display: flex;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding: 0.32rem 0;
+    font-size: 0.82rem;
+    border-left: 2px solid transparent;
+    margin-left: -1.14rem;
+    padding-left: 1rem;
+  }
+  nav.toc a:hover{ color: var(--ink); border-left-color: var(--line-strong); }
+  .toc-index{ color: var(--accent); font-size: 0.78rem; min-width: 1.4em; }
+
+  main{ min-width: 0; }
+  section{ scroll-margin-top: 1.5rem; margin-bottom: 3.4rem; }
+  section > .eyebrow{ display:block; margin-bottom: 0.4rem; }
+  section h2{ font-size: 1.35rem; margin: 0 0 0.9rem; display:flex; align-items:baseline; gap:0.6rem; }
+  section h2 .num{ color: var(--accent); font-size: 1rem; }
+  section h3{ font-size: 1.02rem; margin: 1.6rem 0 0.6rem; }
+  section p{ margin: 0 0 0.9rem; max-width: 68ch; }
+  section ul, section ol{ margin: 0 0 1rem; padding-left: 1.3rem; max-width: 66ch; }
+  section li{ margin-bottom: 0.4rem; }
+  section li::marker{ color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 0.85em; }
+
+  .callout{
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 0.85rem 1.1rem;
+    border-radius: 0 3px 3px 0;
+    max-width: 66ch;
+    margin: 0.5rem 0 1.1rem;
+  }
+  .callout p{ margin: 0; color: var(--ink); }
+
+  /* ---------- tables ---------- */
+  .table-wrap{ overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+  table{ width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--surface); }
+  thead th{
+    text-align: left;
+    padding: 0.6rem 0.85rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  tbody td{
+    padding: 0.62rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.font-body{ font-family: "Public Sans", sans-serif; }
+  .var-name{ color: var(--accent-ink); font-weight: 500; white-space: nowrap; }
+  .req-yes{ color: var(--ok); font-weight: 600; }
+
+  .badge{
+    display:inline-block; font-size:0.68rem; font-weight:600; padding:0.1rem 0.45rem;
+    border-radius:2px; white-space:nowrap;
+  }
+  .badge-web{ background: var(--accent-soft); color: var(--accent-ink); }
+  .badge-worker{ background: var(--ok-soft); color: var(--ok); }
+  .badge-both{ background: var(--warn-soft); color: var(--warn); }
+
+  /* ---------- diagram ---------- */
+  .diagram-frame{
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 1.25rem 1rem 0.5rem;
+  }
+  .diagram-frame svg{ width: 100%; height: auto; display:block; }
+  .diagram-caption{
+    font-size: 0.78rem; color: var(--ink-soft); padding: 0.6rem 0.2rem 0.9rem; margin:0;
+  }
+  .svg-label{ font-family: "IBM Plex Mono", monospace; font-size: 12px; fill: var(--ink); }
+  .svg-label-soft{ font-family: "IBM Plex Mono", monospace; font-size: 10px; fill: var(--ink-soft); }
+  .svg-node{ fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+  .svg-node-ext{ fill: var(--paper); stroke: var(--track); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .line-db{ stroke: var(--accent); stroke-width: 2.5; fill:none; }
+  .line-queue{ stroke: var(--ok); stroke-width: 2.5; fill:none; }
+  .line-ext{ stroke: var(--track); stroke-width: 2; fill:none; stroke-dasharray: 5 4; }
+  .boundary{ fill:none; stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 2 5; }
+  .node-dot{ fill: var(--surface); stroke: var(--ink-soft); stroke-width: 1.5; }
+
+  /* ---------- phases ---------- */
+  .phases{ display:flex; flex-direction:column; gap:0; border-left: 2px solid var(--line); margin-left: 0.6rem; }
+  .phase{ position:relative; padding: 0 0 1.6rem 1.6rem; }
+  .phase:last-child{ padding-bottom: 0; }
+  .phase::before{
+    content:""; position:absolute; left:-6.5px; top:0.2rem; width:11px; height:11px;
+    border-radius:50%; background: var(--surface); border: 2px solid var(--accent);
+  }
+  .phase-head{ display:flex; align-items:baseline; gap:0.7rem; margin-bottom:0.25rem; flex-wrap:wrap; }
+  .phase-head h3{ margin:0; font-size:0.98rem; }
+  .phase-when{ font-size:0.72rem; color: var(--ink-soft); }
+  .phase p{ margin:0; color: var(--ink-soft); max-width: 60ch; }
+
+  /* ---------- risk severity ---------- */
+  .sev{ display:inline-flex; align-items:center; gap:0.4rem; font-weight:600; font-size:0.8rem; }
+  .sev::before{ content:""; width:8px; height:8px; border-radius:1px; }
+  .sev-high::before{ background: var(--risk); }
+  .sev-med::before{ background: var(--warn); }
+  .sev-low::before{ background: var(--ok); }
+  .sev-high{ color: var(--risk); }
+  .sev-med{ color: var(--warn); }
+  .sev-low{ color: var(--ok); }
+
+  footer{
+    max-width: 1180px; margin: 0 auto; padding: 2rem 2rem 3rem;
+    border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8rem;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;
+  }
+
+  @media (max-width: 860px){
+    .layout{ grid-template-columns: 1fr; }
+    nav.toc{
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      border-left: none;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 0.8rem 0;
+      gap: 0 1rem;
+      margin-bottom: 0.5rem;
+    }
+    nav.toc a{ margin-left:0; padding-left:0; border-left:none; }
+    .manifest-top{ flex-direction: column; }
+  }
+</style>
+
+<header class="manifest">
+  <div class="manifest-top">
+    <div class="manifest-title">
+      <span class="eyebrow">System Design Document</span>
+      <h1>Railhead</h1>
+      <p>A batteries-included SaaS starter template for Railway — Next.js, Postgres, Better&nbsp;Auth, Stripe billing, Resend email, and a Redis-backed worker, wired together and deployable in one click.</p>
+    </div>
+    <div class="ticket">
+      <span class="field-label">Doc ID</span><span class="field-value">RH-SDD-001</span>
+      <span class="field-label">Status</span><span class="field-value"><span class="status-pill status-draft">Draft</span></span>
+      <span class="field-label">Version</span><span class="field-value">0.1.0</span>
+      <span class="field-label">Route</span><span class="field-value">web · worker · postgres · redis</span>
+      <span class="field-label">Target platform</span><span class="field-value">Railway</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#overview"><span class="toc-index">01</span>Overview</a>
+    <a href="#goals"><span class="toc-index">02</span>Goals &amp; non-goals</a>
+    <a href="#users"><span class="toc-index">03</span>Target user</a>
+    <a href="#architecture"><span class="toc-index">04</span>Architecture</a>
+    <a href="#stack"><span class="toc-index">05</span>Stack decisions</a>
+    <a href="#data"><span class="toc-index">06</span>Data model</a>
+    <a href="#flows"><span class="toc-index">07</span>Core flows</a>
+    <a href="#env"><span class="toc-index">08</span>Environment variables</a>
+    <a href="#repo"><span class="toc-index">09</span>Repo &amp; deployment</a>
+    <a href="#security"><span class="toc-index">10</span>Security</a>
+    <a href="#rollout"><span class="toc-index">11</span>Rollout plan</a>
+    <a href="#risks"><span class="toc-index">12</span>Risks</a>
+    <a href="#metrics"><span class="toc-index">13</span>Success metrics</a>
+  </nav>
+
+  <main>
+
+    <section id="overview">
+      <span class="eyebrow">01 / Context</span>
+      <h2><span class="num">01</span>Overview</h2>
+      <p>Railway's template hub lists 517 "starter" templates. Framework starters (bare Node.js, Django, Flask) dominate by deploy count, but the moment a builder wants a real SaaS — auth, billing, transactional email, background jobs — the field thins out fast. The top result, <em>Open&nbsp;SaaS</em>, sits at 323 deploys but locks users into the Wasp meta-framework. Everything else stalls under 50 deploys and stitches together at most two of the five pieces a production SaaS actually needs.</p>
+      <p>None of the existing templates reach billing, and none lean on the one structural advantage Railway has over Vercel-style platforms: a long-running worker process. That's the gap this template fills.</p>
+      <div class="callout">
+        <p><strong>Thesis —</strong> ship the two hardest, most-skipped pieces (Stripe billing and a real background worker) already wired up, on plain Next.js, so nobody has to learn a new framework to get a working SaaS skeleton.</p>
+      </div>
+    </section>
+
+    <section id="goals">
+      <span class="eyebrow">02 / Scope</span>
+      <h2><span class="num">02</span>Goals &amp; non-goals</h2>
+      <h3>Goals</h3>
+      <ul>
+        <li>One-click deploy that produces a working sign-up → subscribe → receive-email loop with zero code changes.</li>
+        <li>Every required secret validated at boot; a missing key fails loudly with a named remediation, not a silent 500.</li>
+        <li>Background work (email sending, webhook processing) never blocks a request thread or a Stripe webhook response.</li>
+        <li>Plain, unopinionated Next.js — no custom CLI, no DSL, no meta-framework lock-in.</li>
+      </ul>
+      <h3>Non-goals</h3>
+      <ul>
+        <li>Multi-tenant / organizations data model — v1 is single-user-per-account, noted as a v2 extension point.</li>
+        <li>Admin dashboard UI beyond a minimal job-inspector page.</li>
+        <li>Support for payment providers other than Stripe, or email providers other than Resend, at launch.</li>
+      </ul>
+    </section>
+
+    <section id="users">
+      <span class="eyebrow">03 / Audience</span>
+      <h2><span class="num">03</span>Target user</h2>
+      <p>An indie developer or small team who already knows Next.js, has an idea worth charging for, and doesn't want to spend the first week wiring auth and Stripe again. They've likely tried a Vercel-oriented kit before and hit its ceiling the moment they needed a cron job or a queue that outlives a serverless invocation.</p>
+    </section>
+
+    <section id="architecture">
+      <span class="eyebrow">04 / System</span>
+      <h2><span class="num">04</span>Architecture</h2>
+      <p>Four Railway services, two of them managed plugins. <span class="badge badge-web">web</span> is the only service with a public port; <span class="badge badge-worker">worker</span> talks to Postgres and Redis only, over Railway's private network, and is scaled independently of request traffic.</p>
+
+      <div class="diagram-frame">
+        <svg viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram: browser and Stripe reach the web service; web and worker share Postgres and Redis inside Railway's private network; worker sends email via Resend.">
+          <rect class="boundary" x="230" y="40" width="560" height="330" rx="6"></rect>
+          <text x="246" y="64" class="svg-label-soft">RAILWAY PRIVATE NETWORK</text>
+
+          <!-- external: browser -->
+          <rect class="svg-node-ext" x="20" y="150" width="140" height="56" rx="4"></rect>
+          <text x="90" y="174" text-anchor="middle" class="svg-label">Browser</text>
+          <text x="90" y="190" text-anchor="middle" class="svg-label-soft">end user</text>
+
+          <!-- external: stripe -->
+          <rect class="svg-node-ext" x="740" y="30" width="140" height="56" rx="4"></rect>
+          <text x="810" y="54" text-anchor="middle" class="svg-label">Stripe</text>
+          <text x="810" y="70" text-anchor="middle" class="svg-label-soft">checkout + webhook</text>
+
+          <!-- external: resend -->
+          <rect class="svg-node-ext" x="740" y="330" width="140" height="56" rx="4"></rect>
+          <text x="810" y="354" text-anchor="middle" class="svg-label">Resend</text>
+          <text x="810" y="370" text-anchor="middle" class="svg-label-soft">transactional email</text>
+
+          <!-- web -->
+          <rect class="svg-node" x="270" y="150" width="150" height="60" rx="4"></rect>
+          <text x="345" y="176" text-anchor="middle" class="svg-label">web</text>
+          <text x="345" y="192" text-anchor="middle" class="svg-label-soft">Next.js · public port</text>
+
+          <!-- worker -->
+          <rect class="svg-node" x="270" y="250" width="150" height="60" rx="4"></rect>
+          <text x="345" y="276" text-anchor="middle" class="svg-label">worker</text>
+          <text x="345" y="292" text-anchor="middle" class="svg-label-soft">BullMQ consumer</text>
+
+          <!-- postgres -->
+          <rect class="svg-node" x="560" y="150" width="150" height="60" rx="4"></rect>
+          <text x="635" y="176" text-anchor="middle" class="svg-label">Postgres</text>
+          <text x="635" y="192" text-anchor="middle" class="svg-label-soft">Railway plugin</text>
+
+          <!-- redis -->
+          <rect class="svg-node" x="560" y="250" width="150" height="60" rx="4"></rect>
+          <text x="635" y="276" text-anchor="middle" class="svg-label">Redis</text>
+          <text x="635" y="292" text-anchor="middle" class="svg-label-soft">queue · rate limit</text>
+
+          <!-- browser -> web -->
+          <path class="line-ext" d="M160 178 H270"></path>
+          <!-- web <-> postgres -->
+          <path class="line-db" d="M420 172 H560"></path>
+          <circle class="node-dot" cx="420" cy="172" r="3"></circle>
+          <!-- worker <-> postgres -->
+          <path class="line-db" d="M420 272 H500 V172 H560"></path>
+          <circle class="node-dot" cx="500" cy="272" r="3"></circle>
+          <!-- web <-> redis -->
+          <path class="line-queue" d="M420 198 H540 V280 H560"></path>
+          <circle class="node-dot" cx="420" cy="198" r="3"></circle>
+          <!-- worker <-> redis -->
+          <path class="line-queue" d="M420 280 H560"></path>
+          <!-- stripe -> web -->
+          <path class="line-ext" d="M740 58 H500 V150"></path>
+          <!-- worker -> resend -->
+          <path class="line-ext" d="M420 296 H700 V358 H740"></path>
+        </svg>
+        <p class="diagram-caption"><span style="color:var(--accent)">—</span> Postgres traffic &nbsp; <span style="color:var(--ok)">—</span> Redis / queue traffic &nbsp; <span style="color:var(--track)">┄</span> external, public traffic</p>
+      </div>
+
+      <div class="table-wrap" style="margin-top:1.2rem;">
+        <table>
+          <thead><tr><th>Service</th><th>Runtime</th><th>Public port</th><th>Scaling</th><th>Responsibility</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-web">web</span></td><td class="font-body">Next.js (App Router)</td><td class="font-body">Yes</td><td class="font-body">Horizontal, by request load</td><td class="font-body">UI, API routes, Better Auth, Stripe Checkout creation, webhook receipt</td></tr>
+            <tr><td><span class="badge badge-worker">worker</span></td><td class="font-body">Node (tsx/BullMQ)</td><td class="font-body">No</td><td class="font-body">Horizontal, by queue depth</td><td class="font-body">Email sending, webhook event processing, scheduled jobs</td></tr>
+            <tr><td class="font-body">Postgres</td><td class="font-body">Railway plugin</td><td class="font-body">No</td><td class="font-body">Vertical</td><td class="font-body">Users, sessions, subscriptions, job audit log</td></tr>
+            <tr><td class="font-body">Redis</td><td class="font-body">Railway plugin</td><td class="font-body">No</td><td class="font-body">Vertical</td><td class="font-body">BullMQ queue backend, auth rate-limit counters</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="stack">
+      <span class="eyebrow">05 / Decisions</span>
+      <h2><span class="num">05</span>Stack decisions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Layer</th><th>Choice</th><th>Rejected</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="font-body">ORM</td><td class="var-name">Drizzle</td><td class="font-body">Prisma</td><td class="font-body">No codegen step, cold-starts faster on worker restarts, and ships a first-party Better Auth adapter.</td></tr>
+            <tr><td class="font-body">Auth</td><td class="var-name">Better Auth</td><td class="font-body">NextAuth, Clerk</td><td class="font-body">Self-hosted (no per-MAU fee), owns its own Postgres tables instead of a black-box provider, and supports magic links out of the box.</td></tr>
+            <tr><td class="font-body">Queue</td><td class="var-name">BullMQ</td><td class="font-body">Inngest, pg-boss</td><td class="font-body">Mature, Redis-native, and Redis is already required for Better Auth's rate limiter — no third data store.</td></tr>
+            <tr><td class="font-body">Billing</td><td class="var-name">Stripe Checkout + Billing</td><td class="font-body">Custom card form</td><td class="font-body">Hosted checkout avoids PCI scope entirely; webhooks are the only integration surface.</td></tr>
+            <tr><td class="font-body">Email</td><td class="var-name">Resend</td><td class="font-body">SendGrid, Postmark</td><td class="font-body">React Email templates, generous free tier, simplest API for transactional-only volume.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="data">
+      <span class="eyebrow">06 / Schema</span>
+      <h2><span class="num">06</span>Data model</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Table</th><th>Key columns</th><th>Owner</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="var-name">users</td><td class="font-body">id, email, name, image, created_at</td><td class="font-body">Better Auth</td><td class="font-body">Core identity row</td></tr>
+            <tr><td class="var-name">sessions</td><td class="font-body">id, user_id, expires_at, ip, user_agent</td><td class="font-body">Better Auth</td><td class="font-body">One row per active session</td></tr>
+            <tr><td class="var-name">accounts</td><td class="font-body">id, user_id, provider, provider_account_id</td><td class="font-body">Better Auth</td><td class="font-body">OAuth / social linking, optional at launch</td></tr>
+            <tr><td class="var-name">subscriptions</td><td class="font-body">id, user_id, stripe_customer_id, stripe_subscription_id, price_id, status, current_period_end</td><td class="font-body">App</td><td class="font-body">Upserted only from verified webhook events, never from client input</td></tr>
+            <tr><td class="var-name">jobs_log</td><td class="font-body">id, type, payload, status, attempts, run_at, error</td><td class="font-body">Worker</td><td class="font-body">Durable audit trail; BullMQ itself lives in Redis, not here</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="flows">
+      <span class="eyebrow">07 / Sequences</span>
+      <h2><span class="num">07</span>Core flows</h2>
+
+      <h3>Auth</h3>
+      <ol>
+        <li>Visitor requests a magic link or submits a password on <code>/sign-in</code>.</li>
+        <li>Better Auth validates against <code>users</code> / <code>accounts</code> via the Drizzle adapter.</li>
+        <li>Magic-link path: web enqueues a <code>send-magic-link</code> job to Redis instead of calling Resend inline.</li>
+        <li>Worker consumes the job, calls Resend, writes the result to <code>jobs_log</code>.</li>
+        <li>On success, a session row is created and a signed, httpOnly cookie is set.</li>
+      </ol>
+
+      <h3>Billing</h3>
+      <ol>
+        <li>User picks a plan; web creates a Stripe Checkout Session server-side and redirects to Stripe.</li>
+        <li>Stripe hosts the payment form; on success it redirects back to <code>/billing/success</code>.</li>
+        <li>Stripe fires <code>checkout.session.completed</code> and <code>customer.subscription.updated</code> to <code>/api/webhooks/stripe</code>.</li>
+        <li>Web verifies the signature, <strong>returns 200 immediately</strong>, and pushes the raw event onto Redis — Stripe's 5-second timeout is met no matter what the worker is doing.</li>
+        <li>Worker consumes the event, upserts <code>subscriptions</code>, and enqueues a <code>send-receipt</code> email job.</li>
+      </ol>
+
+      <h3>Background jobs</h3>
+      <ol>
+        <li>Either service enqueues through a shared <code>@app/queue</code> package wrapping BullMQ.</li>
+        <li>Worker is a dedicated Railway service — no public port, scaled by queue depth, not request volume.</li>
+        <li>Failed jobs retry three times with exponential backoff, then land in a dead-letter queue visible on <code>/admin/jobs</code> for manual replay.</li>
+      </ol>
+    </section>
+
+    <section id="env">
+      <span class="eyebrow">08 / Configuration</span>
+      <h2><span class="num">08</span>Environment variables</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Variable</th><th>Service</th><th>Required</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td class="var-name">DATABASE_URL</td><td><span class="badge badge-both">web · worker</span></td><td class="req-yes">yes</td><td class="font-body">Injected via Railway reference variable from the Postgres plugin</td></tr>
+            <tr><td class="var-name">REDIS_URL</td><td><span class="badge badge-both">web · worker</span></td><td class="req-yes">yes</td><td class="font-body">Injected via Railway reference variable from the Redis plugin</td></tr>
+            <tr><td class="var-name">BETTER_AUTH_SECRET</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">32-byte secret signing session cookies</td></tr>
+            <tr><td class="var-name">BETTER_AUTH_URL</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Public app origin, used for callback URLs and cookie scope</td></tr>
+            <tr><td class="var-name">RESEND_API_KEY</td><td><span class="badge badge-worker">worker</span></td><td class="req-yes">yes</td><td class="font-body">Transactional email API key</td></tr>
+            <tr><td class="var-name">RESEND_FROM_EMAIL</td><td><span class="badge badge-worker">worker</span></td><td class="req-yes">yes</td><td class="font-body">Verified sender address</td></tr>
+            <tr><td class="var-name">STRIPE_SECRET_KEY</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Server-side key for creating Checkout Sessions</td></tr>
+            <tr><td class="var-name">STRIPE_WEBHOOK_SECRET</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Verifies the signature on incoming webhook events</td></tr>
+            <tr><td class="var-name">STRIPE_PRICE_ID_MONTHLY</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Price ID surfaced on the monthly plan button</td></tr>
+            <tr><td class="var-name">STRIPE_PRICE_ID_ANNUAL</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Price ID surfaced on the annual plan button</td></tr>
+            <tr><td class="var-name">NEXT_PUBLIC_APP_URL</td><td><span class="badge badge-web">web</span></td><td class="req-yes">yes</td><td class="font-body">Public origin used in emails and Stripe redirect URLs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="repo">
+      <span class="eyebrow">09 / Delivery</span>
+      <h2><span class="num">09</span>Repo &amp; deployment topology</h2>
+      <p>Single monorepo, two Railway services pointed at different root directories:</p>
+      <ul>
+        <li><code>/apps/web</code> — Next.js app, Railway service <span class="var-name">web</span></li>
+        <li><code>/apps/worker</code> — BullMQ consumer entry point, Railway service <span class="var-name">worker</span></li>
+        <li><code>/packages/db</code> — Drizzle schema + migrations, shared by both services</li>
+        <li><code>/packages/queue</code> — BullMQ queue and job-type definitions, shared</li>
+        <li><code>/packages/email</code> — React Email templates, imported by the worker</li>
+      </ul>
+      <p>Postgres and Redis are attached as Railway-managed plugins and wired in via reference variables (<code>${{Postgres.DATABASE_URL}}</code>, <code>${{Redis.REDIS_URL}}</code>) declared in the template's <code>railway.json</code> — nobody copy-pastes a connection string by hand.</p>
+    </section>
+
+    <section id="security">
+      <span class="eyebrow">10 / Hardening</span>
+      <h2><span class="num">10</span>Security</h2>
+      <ul>
+        <li>Stripe webhook signature is verified before any database write; the raw request body bypasses Next.js's JSON body parser so the signature check is against untouched bytes.</li>
+        <li>Session cookies are <code>httpOnly</code>, <code>secure</code>, and <code>sameSite=lax</code>; <code>BETTER_AUTH_SECRET</code> rotates through a Railway variable redeploy, never hardcoded.</li>
+        <li>Public networking is disabled on both the Postgres and Redis plugins by default — only <span class="var-name">web</span> and <span class="var-name">worker</span> can reach them, over the private network.</li>
+        <li>Sign-in and magic-link endpoints are rate-limited with a Redis token bucket to blunt credential stuffing.</li>
+        <li>The worker exposes no HTTP port, so it carries no public attack surface at all.</li>
+      </ul>
+    </section>
+
+    <section id="rollout">
+      <span class="eyebrow">11 / Timeline</span>
+      <h2><span class="num">11</span>Rollout plan</h2>
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 1 — Core</h3><span class="phase-when">week 1–2</span></div>
+          <p>Next.js + Postgres + Better Auth wired end to end; one-click deploy produces working sign-up and sign-in.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 2 — Billing</h3><span class="phase-when">week 3</span></div>
+          <p>Stripe Checkout, webhook handler, and the <code>subscriptions</code> table land; plan gating on protected routes.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 3 — Email &amp; jobs</h3><span class="phase-when">week 4</span></div>
+          <p>Redis and the worker service go live; magic links and billing receipts move off the request path and onto the queue.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-head"><h3>Phase 4 — Polish &amp; submit</h3><span class="phase-when">week 5</span></div>
+          <p>README, architecture diagram, and a recorded deploy walkthrough; submit to the Railway template gallery for the Verified badge.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <span class="eyebrow">12 / Watch list</span>
+      <h2><span class="num">12</span>Risks &amp; mitigations</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+          <tbody>
+            <tr><td class="font-body">Dependency drift — Next.js and the Stripe SDK ship majors fast; stale templates are exactly what's failing today's competitors</td><td><span class="sev sev-high">High</span></td><td class="font-body">Pin exact versions; quarterly update pass tracked as a recurring maintenance task</td></tr>
+            <tr><td class="font-body">Users skip a required env var and hit a broken first deploy</td><td><span class="sev sev-med">Medium</span></td><td class="font-body"><code>railway.json</code> marks every required variable; app fails fast with a page naming exactly what's missing</td></tr>
+            <tr><td class="font-body">Perceived as "just another SaaS kit" next to Vercel-oriented boilerplates</td><td><span class="sev sev-med">Medium</span></td><td class="font-body">Lead positioning with the worker/queue service — the one piece serverless kits can't one-click</td></tr>
+            <tr><td class="font-body">Stripe webhook processing lags during worker cold start</td><td><span class="sev sev-low">Low</span></td><td class="font-body">Web acks the webhook before queueing; worker latency never blocks Stripe's response</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="metrics">
+      <span class="eyebrow">13 / Definition of done</span>
+      <h2><span class="num">13</span>Success metrics</h2>
+      <ul>
+        <li>150+ template deploys within 90 days of listing — half of Open&nbsp;SaaS's lifetime total, in a quarter of the time.</li>
+        <li>Zero-code-change deploy success rate above 90%, tracked via issues tagged <code>deploy-failure</code> on the source repo.</li>
+        <li>Verified badge granted by Railway within the first review cycle.</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>Railhead SDD · v0.1.0</span>
+  <span>Draft — architecture and phasing subject to change before Phase 1 kickoff</span>
+</footer>

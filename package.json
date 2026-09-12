@@ -1,0 +1,26 @@
+{
+  "name": "railhead",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Batteries-included SaaS starter for Railway: Next.js, Postgres, Better Auth, Stripe, Resend, and a queue worker.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev:web": "npm run dev --workspace apps/web",
+    "dev:worker": "npm run dev --workspace apps/worker",
+    "db:generate": "npm run generate --workspace @railhead/db",
+    "db:migrate": "npm run migrate --workspace @railhead/db"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
