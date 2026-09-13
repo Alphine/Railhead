@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "description": "Batteries-included SaaS starter for Railway: Next.js, Postgres, Better Auth, Stripe, Resend, and a queue worker.",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

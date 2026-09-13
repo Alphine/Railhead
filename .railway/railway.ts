@@ -7,9 +7,9 @@ export default defineRailway((ctx) => {
   const publicUrl = "https://${{RAILWAY_PUBLIC_DOMAIN}}";
 
   const web = service("web", {
-    source: github("Alphine/Railhead", { rootDirectory: "apps/web", branch: "main" }),
-    build: "npm run build",
-    start: "npm run start",
+    source: github("Alphine/Railhead", { branch: "main" }),
+    build: "npm run build --workspaces --if-present",
+    start: "npm run start --workspace=apps/web",
     healthcheck: "/api/health",
     env: {
       DATABASE_URL: db.env.DATABASE_URL,
@@ -37,9 +37,9 @@ export default defineRailway((ctx) => {
   });
 
   const worker = service("worker", {
-    source: github("Alphine/Railhead", { rootDirectory: "apps/worker", branch: "main" }),
-    build: "npm run build",
-    start: "npm run start",
+    source: github("Alphine/Railhead", { branch: "main" }),
+    build: "npm run build --workspaces --if-present",
+    start: "npm run start --workspace=apps/worker",
     env: {
       DATABASE_URL: db.env.DATABASE_URL,
       REDIS_URL: cache.env.REDIS_URL,
