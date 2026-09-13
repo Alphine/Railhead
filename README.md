@@ -93,11 +93,45 @@ real database, Redis, or Stripe account.
 
 ## Deploying
 
-Deploy Postgres and Redis as Railway plugins, then deploy `apps/web` and
-`apps/worker` as separate services from this repo (`railway.json` sets each
-service's root directory and wires the reference variables). Fill in the
-Stripe and Resend variables from the table above and you have a working
-sign-up → subscribe → receive-email loop.
+`.railway/railway.ts` declares the full stack as code — Postgres, Redis,
+and the `web`/`worker` services, each built with `npm run build
+--workspaces --if-present` (packages before apps — the workspaces array in
+the root `package.json` is intentionally ordered `packages/*` then
+`apps/*` so this resolves correctly) and started with `npm run start
+--workspace=apps/web` / `apps/worker`. Apply it with `railway config
+apply`.
+
+**If Railway's GitHub App isn't authorized for this repo yet** (the
+project dashboard shows "GitHub Repo not found" even though the service is
+configured with the right repo), deploys from a `git push` won't fire
+automatically. Grant access under your Railway account's GitHub
+integration settings, or in the meantime deploy directly from your machine
+with `railway up --service web` / `--service worker`.
+
+### Running the first migration
+
+Like the app itself, the production image doesn't carry a live database to
+migrate against at build time, so the schema has to be applied once,
+after the services are up:
+
+```bash
+railway tcp-proxy create --port 5432 --service Postgres   # temporary public endpoint
+DATABASE_URL="postgresql://postgres:<password>@<proxy-host>:<proxy-port>/railway?sslmode=require" \
+  npm run db:generate --workspace @railhead/db   # writes packages/db/drizzle/*.sql
+NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="postgresql://postgres:<password>@<proxy-host>:<proxy-port>/railway?sslmode=require" \
+  npm run db:migrate --workspace @railhead/db
+railway tcp-proxy delete <proxy-id> --yes                  # close it back up
+```
+
+`NODE_TLS_REJECT_UNAUTHORIZED=0` is only needed because Railway's Postgres
+plugin presents a self-signed certificate — fine for this one-off local
+run against your own database, not something to set generally.
+`packages/db/drizzle/` already contains the migration generated from this
+template's schema; you only need to regenerate it if you change
+`packages/db/src/schema.ts` afterward.
+
+Fill in the Stripe and Resend variables from the table above and you have
+a working sign-up → subscribe → receive-email loop.
 
 ## License
 
