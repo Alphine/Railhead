@@ -4,6 +4,11 @@ import { eq } from "drizzle-orm";
 import { db, schema } from "@railhead/db";
 import { getAuth } from "../../src/lib/auth";
 
+// Reads the live session and subscription state on every request, and
+// transitively pulls in env validation for optional vars (Stripe) that a
+// fresh deploy may not have set yet — never statically prerender this.
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await getAuth().api.getSession({
     headers: await headers(),
