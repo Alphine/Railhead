@@ -1,53 +1,65 @@
-# Railhead
+# Deploy and Host Railhead on Railway
 
-A batteries-included SaaS starter: **Next.js + Postgres + Better Auth +
-Stripe billing + Resend email + a Redis-backed worker**, wired together
-and ready to deploy.
+Railhead is a batteries-included SaaS starter: Next.js, Postgres, Better
+Auth, Stripe billing, Resend email, and a Redis-backed worker, wired
+together and ready to deploy. Most "SaaS starter" templates stop at auth
+and a database — Railhead goes the rest of the way, because Stripe
+Checkout and webhooks, transactional email, and a real background worker
+are the parts everyone rebuilds from scratch and nobody wants to.
 
-Most "SaaS starter" templates stop at auth and a database. Railhead goes
-the rest of the way — Stripe Checkout and webhooks, transactional email,
-and a real background worker — because those are the parts everyone
-rebuilds from scratch and nobody wants to.
+## About Hosting Railhead
 
-## What you get
+This template deploys two Railway services (a Next.js app and a BullMQ
+worker) plus a Postgres and a Redis plugin, wired together with
+reference variables. The `web` service handles the UI, Better Auth
+sign-up/sign-in, and Stripe Checkout; the `worker` service is a
+dedicated, no-public-port BullMQ consumer that sends transactional email
+and processes Stripe webhook events asynchronously, so a webhook is
+always acknowledged inside Stripe's 5-second window regardless of
+downstream load.
 
-- **Auth that's yours.** Better Auth, self-hosted on your own Postgres —
-  email/password and magic links, no per-user fee to a third party.
-- **Billing that's already wired.** Stripe Checkout for monthly/annual
-  plans, and a webhook route that verifies, acks in under 5 seconds, and
-  hands off the real work — never blocking on Stripe's timeout.
-- **A worker that outlives a request.** A dedicated BullMQ service on
-  Redis processes webhooks and sends email — the one thing a
-  serverless/Vercel-style starter can't one-click.
-- **Fail-fast config.** Missing an env var? The app tells you exactly
-  which one, instead of a blank 500 page.
+## Why Deploy Railhead on Railway?
 
-## Services this deploys
+Railway is a singular platform to deploy your infrastructure stack.
+Railway will host your infrastructure so you don't have to deal with
+configuration, while allowing you to vertically and horizontally scale
+it. Deploying Railhead on Railway means every piece — the app, the
+worker, Postgres, and Redis — lives on one dashboard with private
+networking between them already wired in, and the worker service runs
+as a genuine long-lived process, which is the one thing a
+serverless/Vercel-style starter can't one-click.
 
-| Service | What it is |
-| --- | --- |
-| `web` | Next.js 15 app — UI, auth, Stripe checkout, webhook receipt |
-| `worker` | BullMQ consumer — sends email, processes webhook events |
-| Postgres | Users, sessions, subscriptions |
-| Redis | Job queue + auth rate limiting |
+## Common Use Cases
 
-## After deploying
+- Launching a subscription SaaS product without rebuilding auth and
+  billing from scratch.
+- A starting point for an indie developer or small team who wants
+  Stripe Checkout and a background worker wired in from day one.
+- A reference implementation of "ack fast, process async" for Stripe
+  webhooks, worth reading even if you don't deploy it.
 
-1. Add your Stripe keys (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
-   `STRIPE_PRICE_ID_MONTHLY`, `STRIPE_PRICE_ID_ANNUAL`) and Resend keys
-   (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`) — both are optional at
-   deploy time so the template boots without them, but sign-up and
-   checkout need them to actually work.
-2. Run the database migration once (see the repo README for the exact
-   command) — Postgres starts empty.
-3. You're live: sign up, subscribe, and the receipt email goes out
-   through the worker.
+## Dependencies for Railhead Hosting
+
+- A [Stripe](https://stripe.com) account (test or live) for
+  `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and the two price IDs.
+- A [Resend](https://resend.com) account for `RESEND_API_KEY` and a
+  verified `RESEND_FROM_EMAIL`.
+
+Both are optional at deploy time — the template boots without them —
+but sign-up and checkout need them filled in to actually work.
+
+### Deployment Dependencies
+
+- [Next.js](https://nextjs.org) 15 (App Router)
+- [Drizzle ORM](https://orm.drizzle.team) on Postgres
+- [Better Auth](https://www.better-auth.com)
+- [Stripe](https://stripe.com) Checkout + webhooks
+- [Resend](https://resend.com) + React Email
+- [BullMQ](https://docs.bullmq.io) on Redis
 
 Full architecture, data model, and the system design document behind
 these decisions live in the [GitHub repo](https://github.com/Alphine/Railhead).
-
-## License
-
-Free and open source, [LGPL-3.0](https://github.com/Alphine/Railhead/blob/main/LICENSE).
-Fork it and build a proprietary product on top — only changes to
-Railhead itself need to stay open.
+Railhead is free and open source under
+[LGPL-3.0](https://github.com/Alphine/Railhead/blob/main/LICENSE) — fork
+it and build a proprietary product on top; only changes to Railhead
+itself need to stay open.
