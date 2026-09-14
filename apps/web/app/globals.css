@@ -97,3 +97,395 @@ td {
   background: #eee;
   font-size: 0.85rem;
 }
+
+/* ---------------------------------------------------------------------
+   Landing page (/) — scoped under .rh-landing so it doesn't touch the
+   shared button/form/table rules above, which /sign-in, /dashboard and
+   /admin/jobs still use as-is.
+   --------------------------------------------------------------------- */
+
+main.rh-landing {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: oklch(0.16 0.018 262);
+  color: oklch(0.94 0.006 260);
+  font-family: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.rh-landing a {
+  color: oklch(0.78 0.14 260);
+  text-decoration: none;
+}
+.rh-landing a:hover {
+  color: oklch(0.86 0.1 260);
+}
+
+.rh-glow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+.rh-glow-top {
+  top: -280px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1100px;
+  height: 620px;
+  background: radial-gradient(closest-side, oklch(0.5 0.16 260 / 0.28), transparent 70%);
+}
+.rh-glow-side {
+  top: 420px;
+  right: -220px;
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(closest-side, oklch(0.55 0.12 210 / 0.14), transparent 72%);
+}
+
+.rh-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.rh-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34px 0 0;
+}
+.rh-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 600;
+  font-size: 15px;
+  color: oklch(0.96 0.005 260);
+}
+.rh-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 14px;
+}
+.rh-nav-links a {
+  color: oklch(0.78 0.01 260);
+}
+.rh-nav-signin {
+  color: oklch(0.94 0.006 260) !important;
+  border: 1px solid oklch(0.38 0.02 260);
+  padding: 7px 16px;
+  border-radius: 7px;
+}
+
+.rh-hero {
+  padding: 96px 0 72px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.rh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid oklch(0.4 0.06 260);
+  border-radius: 999px;
+  background: oklch(0.22 0.03 260 / 0.6);
+  margin-bottom: 28px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.8 0.01 260);
+}
+.rh-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.72 0.16 260);
+}
+.rh-headline {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 24px;
+  max-width: 720px;
+  text-wrap: balance;
+  color: oklch(0.97 0.004 260);
+}
+.rh-headline em {
+  font-style: italic;
+  color: oklch(0.78 0.14 260);
+}
+.rh-subhead {
+  font-size: 18px;
+  line-height: 1.6;
+  color: oklch(0.74 0.012 260);
+  max-width: 540px;
+  margin: 0 0 36px;
+}
+.rh-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.rh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 26px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.rh-btn:hover {
+  transform: translateY(-1px);
+}
+.rh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.rh-btn-primary {
+  background: oklch(0.94 0.006 260);
+  color: oklch(0.16 0.018 262) !important;
+}
+.rh-btn-ghost {
+  border: 1px solid oklch(0.4 0.02 260);
+  color: oklch(0.9 0.006 260) !important;
+  font-weight: 500;
+  padding: 12px 24px;
+}
+.rh-btn-outline {
+  border: 1px solid oklch(0.42 0.02 260);
+  background: transparent;
+  color: oklch(0.94 0.006 260) !important;
+}
+
+.rh-stack-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0.82;
+}
+.rh-stack-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  color: oklch(0.68 0.01 260);
+}
+.rh-stack-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: oklch(0.4 0.01 260);
+}
+
+.rh-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: oklch(0.3 0.02 260 / 0.5);
+  border: 1px solid oklch(0.3 0.02 260 / 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 120px;
+}
+.rh-feature {
+  background: oklch(0.185 0.02 262);
+  padding: 32px 28px;
+}
+.rh-feature svg {
+  color: oklch(0.78 0.14 260);
+  margin-bottom: 16px;
+}
+.rh-feature h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: oklch(0.96 0.005 260);
+}
+.rh-feature p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: oklch(0.66 0.012 260);
+  margin: 0;
+}
+
+.rh-pricing {
+  padding-bottom: 120px;
+}
+.rh-pricing-head {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.rh-eyebrow-label {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.72 0.14 260);
+}
+.rh-pricing-head h2 {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: 38px;
+  margin: 10px 0 0;
+  color: oklch(0.97 0.004 260);
+}
+
+.rh-error {
+  max-width: 480px;
+  margin: 0 auto 24px;
+  text-align: center;
+  color: oklch(0.75 0.15 25);
+  font-size: 14px;
+}
+
+.rh-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.rh-plan-card {
+  background: oklch(0.19 0.02 262);
+  border: 1px solid oklch(0.3 0.02 260);
+  border-radius: 16px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.rh-plan-card-featured {
+  background: oklch(0.205 0.028 262);
+  border: 1px solid oklch(0.5 0.1 260 / 0.5);
+  box-shadow:
+    0 0 0 1px oklch(0.55 0.14 260 / 0.15),
+    0 20px 60px -20px oklch(0.4 0.16 260 / 0.5);
+}
+.rh-plan-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: oklch(0.72 0.16 260);
+  color: oklch(0.14 0.02 262);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.rh-plan-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: oklch(0.86 0.008 260);
+  margin: 8px 0 6px;
+}
+.rh-plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 40px;
+  color: oklch(0.97 0.004 260);
+}
+.rh-plan-price small {
+  font-family: var(--font-public-sans), sans-serif;
+  font-size: 14px;
+  color: oklch(0.62 0.012 260);
+}
+.rh-plan-sub {
+  font-size: 13.5px;
+  color: oklch(0.6 0.012 260);
+  margin: 0 0 24px;
+}
+.rh-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  flex-grow: 1;
+}
+.rh-plan-features li {
+  font-size: 14px;
+  color: oklch(0.82 0.008 260);
+  padding-left: 22px;
+  position: relative;
+}
+.rh-plan-features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 12px;
+  height: 8px;
+  border-left: 2px solid oklch(0.78 0.14 260);
+  border-bottom: 2px solid oklch(0.78 0.14 260);
+  transform: rotate(-45deg);
+}
+.rh-plan-cta {
+  width: 100%;
+}
+
+.rh-signin-line {
+  text-align: center;
+  font-size: 13.5px;
+  color: oklch(0.55 0.012 260);
+  margin-top: 24px;
+}
+
+.rh-footer {
+  border-top: 1px solid oklch(0.28 0.02 260);
+  padding: 28px 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: oklch(0.52 0.012 260);
+}
+.rh-footer-links {
+  display: flex;
+  gap: 22px;
+}
+.rh-footer-links a {
+  color: oklch(0.6 0.012 260) !important;
+}
+
+@media (max-width: 720px) {
+  .rh-headline {
+    font-size: 42px;
+  }
+  .rh-features,
+  .rh-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .rh-hero {
+    padding: 72px 0 56px;
+  }
+}
