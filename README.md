@@ -101,12 +101,13 @@ the root `package.json` is intentionally ordered `packages/*` then
 --workspace=apps/web` / `apps/worker`. Apply it with `railway config
 apply`.
 
-**If Railway's GitHub App isn't authorized for this repo yet** (the
-project dashboard shows "GitHub Repo not found" even though the service is
-configured with the right repo), deploys from a `git push` won't fire
-automatically. Grant access under your Railway account's GitHub
-integration settings, or in the meantime deploy directly from your machine
-with `railway up --service web` / `--service worker`.
+**If a service was ever deployed with `railway up` (a direct upload)
+before being pointed at this repo**, its source stays pinned to that
+upload — `git push` won't trigger a rebuild, and Railway's "Generate
+Template" action will refuse it with "does not have a source that can
+be used to generate a template". Fix it once with
+`railway service source connect --repo <owner>/<repo> --branch main --service <name>`,
+which both re-points the source and triggers an immediate rebuild.
 
 ### Running the first migration
 
